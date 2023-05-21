@@ -6,8 +6,8 @@ const receiptService = new ReceiptService();
 
 router.post('/receipts', async (req, res) => {
   try {
-    const { name } = req.body;
-    const receipt = await receiptService.createReceipt(name);
+    const { name, categoryId } = req.body;
+    const receipt = await receiptService.createReceipt(name, categoryId);
     res.status(201).json(receipt);
   } catch (error) {
     res.status(400).json({ error: error.message });
