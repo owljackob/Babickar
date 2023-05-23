@@ -11,11 +11,12 @@ class CategoryService {
         }
     }
     async getCategoryById(id) {
-        const category = await Category.findByPk(id);
-        if (!category) {
-            throw new Error('Category not found');
+        try {
+            return await Category.findByPk(id);
+        } catch (error) {
+            console.error('Error retrieving categories:', error);
+            throw new Error('Category not found.' + error);
         }
-        return category;
     }
 }
 module.exports = new CategoryService();

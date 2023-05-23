@@ -1,10 +1,12 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 const Category = require("./category");
+const Difficulty = require("./difficulty");
+const Material = require("./material");
 
-class Receipt extends Model {}
+class Recipe extends Model {}
 
-Receipt.init(
+Recipe.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -25,13 +27,23 @@ Receipt.init(
                 key: 'id',
             },
         },
+        difficultyId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: Difficulty,
+                key: 'id',
+            }
+        }
     },
     {
         sequelize,
-        modelName: 'Receipt',
+        modelName: 'Recipe',
     }
 );
 
-Receipt.belongsTo(Category, { foreignKey: 'categoryId' });
+Recipe.belongsTo(Category, { foreignKey: 'categoryId' });
+Recipe.belongsTo(Difficulty, { foreignKey: 'difficultyId' });
+Recipe.hasMany(Material, { foreignKey: 'recipeId', onDelete: 'CASCADE' });
 
-module.exports = Receipt;
+module.exports = Recipe;
