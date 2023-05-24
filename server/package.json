@@ -1,0 +1,28 @@
+{
+  "name": "babickar",
+  "version": "1.0.0",
+  "description": "cook book project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owljackob/Babickar.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/owljackob/Babickar/issues"
+  },
+  "homepage": "https://github.com/owljackob/Babickar#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^3.2.4",
+    "sequelize": "^6.31.0",
+    "winston": "^3.8.2"
+  }
+}
