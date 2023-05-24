@@ -12,11 +12,12 @@ export const GlobalStyles = createGlobalStyle`
         }
 
         ::-webkit-scrollbar-track {
-            background: ${(props) => props.theme.pink};
+            border: 1px solid ${(props) => props.theme.text};
+            border-radius: 999px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: ${(props) => props.theme.green};
+            background: ${(props) => props.theme.secondary};
             border-radius: 999px;
         }
     }
@@ -26,9 +27,8 @@ export const GlobalStyles = createGlobalStyle`
     }
     
     body {
-        background-color: ${(props) => props.theme.white};
-        background-image: url("https://www.transparenttextures.com/patterns/ps-neutral.png");
-        color: ${(props) => props.theme.gray};
+        background-color: ${(props) => props.theme.primary};
+        color: ${(props) => props.theme.text};
     }
 
     a {

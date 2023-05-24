@@ -34,7 +34,7 @@ export function Recipes() {
     if (debouncedSearch.trim()) {
       const lowercasedSearch = debouncedSearch.toLowerCase();
       filteredRecipes = recipes.filter(recipe =>
-          recipe.name.toLowerCase().includes(lowercasedSearch)
+        recipe.name.toLowerCase().includes(lowercasedSearch)
       );
     }
 
@@ -55,23 +55,23 @@ export function Recipes() {
   };
 
   return (
-      <RecipesContainer>
-        <PageHeader title="Recepty" subtitle="Recepty pro celou rodinu" />
-        <SearchInput
-            onChange={onChangeSearch}
-            value={search}
-            placeholder="Co chceš dnes vařit?"
-            type="search"
+    <RecipesContainer>
+      <PageHeader title="Recepty" subtitle="Recepty pro celou rodinu" />
+      <SearchInput
+        onChange={onChangeSearch}
+        value={search}
+        placeholder="Co chceš dnes vařit?"
+        type="search"
+      />
+      <RecipesList recipes={displayedRecipes} />
+      {recipes.length > 0 && (
+        <Pagination
+          totalCountOfRegisters={recipes.length}
+          currentPage={currentPage}
+          onPageChange={onPageChange}
+          registerPerPage={ITEMS_PER_PAGE}
         />
-        <RecipesList recipes={displayedRecipes} />
-        {recipes.length > 0 && (
-            <Pagination
-                totalCountOfRegisters={recipes.length}
-                currentPage={currentPage}
-                onPageChange={onPageChange}
-                registerPerPage={ITEMS_PER_PAGE}
-            />
-        )}
-      </RecipesContainer>
+      )}
+    </RecipesContainer>
   );
 }
