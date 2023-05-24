@@ -1,15 +1,27 @@
 const express = require('express');
-const userRoutes = require('./routes/receiptRoutes');
+const recipeRoutes = require('./routes/recipeRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const difficultyRoutes = require('./routes/difficultyRoutes');
+const ingredientRoutes = require('./routes/ingredientRoutes');
+const materialRoutes = require('./routes/materialRoutes');
 const sequelize = require('./config/database');
 
 const app = express();
 
-app.use(userRoutes);
+app.use(recipeRoutes);
+app.use(categoryRoutes);
+app.use(difficultyRoutes);
+app.use(ingredientRoutes);
+app.use(materialRoutes);
+
 
 sequelize
     .authenticate()
     .then(() => {
         console.log('Database connected!');
+        return sequelize.sync({ alter: true });
+    })
+    .then(() => {
         app.listen(3000, () => {
             console.log('Server started on port 3000');
         });
