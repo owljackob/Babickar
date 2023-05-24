@@ -5,10 +5,12 @@ import { PageHeader } from "../../components/PageHeader";
 import { Pagination } from "../../components/Pagination";
 import { RecipesList } from "../../components/RecipesList";
 import { RecipesContainer, SearchInput } from "./styles";
+import AddRecipePopup from './AddRecipePopup';
 
 const ITEMS_PER_PAGE = 12;
 
 export function Recipes() {
+  const [isPopupOpen, setPopupOpen] = useState(false);
   const [recipes, setRecipes] = useState([]);
   const [displayedRecipes, setDisplayedRecipes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,6 +26,20 @@ export function Recipes() {
       console.error("Error getting recipes: ", error);
     }
   }, []);
+
+  const openPopup = () => {
+    setPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
+
+  const addRecipe = (recipeName) => {
+    const newRecipe = { name: recipeName };
+    setRecipes([...recipes, newRecipe]);
+    closePopup();
+  };
 
   useEffect(() => {
     fetchRecipes();
@@ -62,6 +78,12 @@ export function Recipes() {
         value={search}
         placeholder="Co chceš dnes vařit?"
         type="search"
+      />
+      <button onClick={openPopup}>Sdílení receptu</button>
+      <AddRecipePopup
+        isOpen={isPopupOpen}
+        onClose={closePopup}
+        onAddRecipe={addRecipe}
       />
       <RecipesList recipes={displayedRecipes} />
       {recipes.length > 0 && (
