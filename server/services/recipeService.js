@@ -1,11 +1,11 @@
 const Recipe = require('../models/recipe');
-const materialService = require('./materialService');
-const ingredientService = require('./ingredientService');
 const Material = require("../models/material");
 const Ingredient = require("../models/ingredient");
 const Difficulty = require("../models/difficulty");
 const Category = require("../models/category");
-const {Op, Sequelize} = require("sequelize");
+const materialService = require('./materialService');
+const ingredientService = require('./ingredientService');
+const { Sequelize } = require("sequelize");
 
 class RecipeService {
     async createRecipe(name, categoryId, difficultyId, materials) {
@@ -32,7 +32,6 @@ class RecipeService {
             console.error(error);
             throw new Error('Failed to create recipe. ' + error);
         }
-
     }
 
     async getAllRecipes(){
@@ -41,16 +40,10 @@ class RecipeService {
                 include: [
                     {
                         model: Material,
-                        include: {
-                            model: Ingredient
-                        }
+                        include: {model: Ingredient}
                     },
-                    {
-                        model: Difficulty
-                    },
-                    {
-                        model: Category
-                    }
+                    {model: Difficulty},
+                    {model: Category}
                 ]
             });
         } catch (error) {
@@ -59,92 +52,36 @@ class RecipeService {
         }
     }
 
-    async getRecipesByFilter(categoryId, difficultyId){
-        if (categoryId !== null && difficultyId !== null){
-            try {
-                return await Recipe.findAll({
-                    where: {
-                        categoryId: categoryId,
-                        difficultyId: difficultyId
-                    },
-                    include: [
-                        {
-                            model: Material,
-                            include: {
-                                model: Ingredient
-                            }
-                        },
-                        {
-                            model: Difficulty
-                        },
-                        {
-                            model: Category
-                        }
-                    ]
-                })
-            } catch (error) {
-                console.error('Error filtering recipes:', error);
-                throw new Error('Error filtering recipes');
+    async getRecipesByFilter(categoryId, difficultyId) {
+        try {
+            console.log('categoryId: ', categoryId);
+            console.log('Type of categoryId: ', typeof categoryId);
+            console.log('difficultyId: ',    difficultyId);
+            console.log('Type of difficultyId: ', typeof difficultyId);
+            let filter = {};
+            if (categoryId !== null && !isNaN(categoryId)) {
+                filter.categoryId = categoryId;
             }
-        } else if (categoryId !== null && difficultyId === null){
-            try {
-                return await Recipe.findAll({
-                    where: {
-                        categoryId: categoryId
-                    },
-                    include: [
-                        {
-                            model: Material,
-                            include: {
-                                model: Ingredient
-                            }
-                        },
-                        {
-                            model: Difficulty
-                        },
-                        {
-                            model: Category
-                        }
-                    ]
-                })
-            } catch (error) {
-                console.error('Error filtering recipes:', error);
-                throw new Error('Error filtering recipes');
-            }
-        } else if (categoryId === null && difficultyId !== null){
-            try {
-                return await Recipe.findAll({
-                    where: {
-                        difficultyId: difficultyId
-                    },
-                    include: [
-                        {
-                            model: Material,
-                            include: {
-                                model: Ingredient
-                            }
-                        },
-                        {
-                            model: Difficulty
-                        },
-                        {
-                            model: Category
-                        }
-                    ]
-                })
-            } catch (error) {
-                console.error('Error filtering recipes:', error);
-                throw new Error('Error filtering recipes');
-            }
-        } else {
-            try {
-                return this.getAllRecipes();
-            } catch (error) {
-                console.error('Error filtering recipes:', error);
-                throw new Error('Error filtering recipes');
-            }
-        }
 
+            if (difficultyId !== null && !isNaN(difficultyId)) {
+                filter.difficultyId = difficultyId;
+            }
+
+            return await Recipe.findAll({
+                where: filter,
+                include: [
+                    {
+                        model: Material,
+                        include: { model: Ingredient }
+                    },
+                    { model: Difficulty },
+                    { model: Category }
+                ]
+            });
+        } catch (error) {
+            console.error('Error filtering recipes:', error);
+            throw new Error('Error filtering recipes');
+        }
     }
     async getRecipesBySearch(input){
         try {
@@ -181,22 +118,61 @@ class RecipeService {
                 include: [
                     {
                         model: Material,
-                        include: {
-                            model: Ingredient
-                        }
+                        include: {model: Ingredient}
                     },
-                    {
-                        model: Difficulty
-                    },
-                    {
-                        model: Category
-                    }
+                    {model: Difficulty},
+                    {model: Category}
                 ]
             });
             return recipe;
         } catch (error) {
             console.error(error);
             throw new Error('Recipe is not found. ' + error);
+        }
+    }
+
+    async deleteRecipeById(id){
+        try {
+            const recipe = await Recipe.findByPk(id);
+            await recipe.destroy();
+            return true;
+        } catch (error) {
+            console.error(error);
+            throw new Error('Deletion error. Recipe is not found. ' + error);
+        }
+    }
+
+    async updateRecipe(id, name, categoryId, difficultyId, materials){
+        try {
+            const recipe = await Recipe.findByPk(id, {
+                include: [Material]
+            });
+            if (!recipe) {
+                throw new Error('Recipe not found');
+            }
+            console.log(recipe);
+            recipe.name = name;
+            recipe.categoryId = categoryId;
+            recipe.difficultyId = difficultyId;
+            for (const material of recipe.Materials){
+                await material.destroy();
+            }
+
+            for (const materialData of materials){
+                const {ingredientId, count, unit} = materialData;
+                const ingredient = await ingredientService.getIngredientById(ingredientId);
+                console.log(ingredient);
+                await materialService.createMaterial(
+                    count,
+                    unit,
+                    recipe.id,
+                    ingredient.id
+                );
+            }
+            await recipe.save();
+        } catch ( error ) {
+            console.error(error);
+            throw new Error('Failed to update recipe. Not found' + error);
         }
     }
 }

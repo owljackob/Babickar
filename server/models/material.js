@@ -1,6 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 const Ingredient = require("./ingredient");
+const Recipe = require("./recipe");
 
 class Material extends Model {}
 
@@ -28,5 +29,6 @@ Material.init(
 );
 
 Material.belongsTo(Ingredient, { foreignKey: 'ingredientId' });
+//Material.belongsTo(Recipe, { foreignKey: 'recipeId' });
 
 module.exports = Material;

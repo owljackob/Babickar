@@ -10,13 +10,13 @@ class CategoryService {
             throw new Error('Error retrieving categories');
         }
     }
-    async getCategoryById(id) {
-        try {
-            return await Category.findByPk(id);
-        } catch (error) {
-            console.error('Error retrieving categories:', error);
-            throw new Error('Category not found.' + error);
-        }
-    }
+    // async getCategoryById(id) {
+    //     try {
+    //         return await Category.findByPk(id);
+    //     } catch (error) {
+    //         console.error('Error retrieving categories:', error);
+    //         throw new Error('Category not found.' + error);
+    //     }
+    // }
 }
 module.exports = new CategoryService();

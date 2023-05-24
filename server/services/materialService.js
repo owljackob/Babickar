@@ -1,5 +1,4 @@
 const Material = require('../models/material');
-const Ingredient = require("../models/ingredient");
 
 class MaterialService {
 
@@ -20,5 +19,8 @@ class MaterialService {
 
     }
 
+    async deleteMaterialById(count, unit, recipeId, ingredientId){
+
+    }
 }
 module.exports = new MaterialService();
