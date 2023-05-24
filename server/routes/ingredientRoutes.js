@@ -6,6 +6,6 @@ const router = express.Router();
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-router.use('/ingredientsApi', IngredientController);
+router.use('/api/ingredientsApi', IngredientController);
 
 module.exports = router;

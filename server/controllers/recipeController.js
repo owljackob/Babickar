@@ -29,11 +29,15 @@ router.get('/allRecipes/:id', async (req, res) => {
   }
 });
 
-router.get('/allRecipes/filter', async (req, res) => {
+router.get('/filter', async (req, res) => {
   try {
     const { categoryId, difficultyId } = req.query;
-    const recipesByFilter = await recipeService.getRecipesByFilter(categoryId, difficultyId);
-    return recipesByFilter;
+    const recipesByFilter = await recipeService.getRecipesByFilter(
+        Number(categoryId),
+        Number(difficultyId)
+    );
+
+    return res.json(recipesByFilter);
   } catch (error) {
     console.error('Error filtering the recipes:', error);
     res.status(404).json({ error: error.message });
@@ -52,6 +56,29 @@ router.get('/allRecipes', async (req, res) => {
   } catch (error) {
     console.error('Error getting the recipe:', error);
     res.status(404).json({ error: error.message });
+  }
+});
+
+router.delete('/allRecipes/:id/delete', async (req, res) => {
+  try {
+    await recipeService.deleteRecipeById(req.params.id);
+    res.status(201).json({message: 'Recipe deleted successfully'});
+  } catch (error) {
+    console.error('Error deleting the recipe:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/allRecipes/:id/update', async (req, res) => {
+  const recipeId = req.params.id;
+  const { name, categoryId, difficultyId, materials} = req.body;
+
+  try {
+    await recipeService.updateRecipe(recipeId, name, categoryId, difficultyId, materials);
+    res.status(201).send('Recipe updated successfully');
+  } catch (error) {
+    console.error('Error updating the recipe:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
