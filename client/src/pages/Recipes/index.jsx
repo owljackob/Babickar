@@ -1,31 +1,49 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "usehooks-ts";
 import { PageHeader } from "../../components/PageHeader";
 import { Pagination } from "../../components/Pagination";
 import { RecipesList } from "../../components/RecipesList";
 import { RecipesContainer, SearchInput } from "./styles";
-import AddRecipePopup from './AddRecipePopup';
+import AddRecipePopup from "./AddRecipePopup";
+import "./share-button.css";
 
 const ITEMS_PER_PAGE = 12;
 
 export function Recipes() {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [recipes, setRecipes] = useState([]);
-  const [displayedRecipes, setDisplayedRecipes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
 
   const fetchRecipes = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/recipesApi/allRecipes");
-      setRecipes(response.data);
-      console.log(response.data);
+      const response = await axios.get(
+        "http://localhost:3000/api/recipesApi/allRecipes"
+      );
+      const sortedRecipes = response.data.sort((a, b) => b.id - a.id);
+      setRecipes(sortedRecipes);
     } catch (error) {
       console.error("Error getting recipes: ", error);
     }
   }, []);
+
+  const filteredRecipes = useMemo(() => {
+    let results = recipes;
+    if (debouncedSearch.trim()) {
+      const lowercasedSearch = debouncedSearch.toLowerCase();
+      results = recipes.filter((recipe) =>
+        recipe.name.toLowerCase().includes(lowercasedSearch)
+      );
+    }
+    return results;
+  }, [recipes, debouncedSearch]);
+
+  const paginatedRecipes = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredRecipes.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredRecipes, currentPage]);
 
   const openPopup = () => {
     setPopupOpen(true);
@@ -45,21 +63,6 @@ export function Recipes() {
     fetchRecipes();
   }, [fetchRecipes]);
 
-  useEffect(() => {
-    let filteredRecipes = recipes;
-    if (debouncedSearch.trim()) {
-      const lowercasedSearch = debouncedSearch.toLowerCase();
-      filteredRecipes = recipes.filter(recipe =>
-        recipe.name.toLowerCase().includes(lowercasedSearch)
-      );
-    }
-
-    // Handle pagination here
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const paginatedRecipes = filteredRecipes.slice(start, start + ITEMS_PER_PAGE);
-    setDisplayedRecipes(paginatedRecipes);
-  }, [recipes, debouncedSearch, currentPage]);
-
   const onPageChange = (page) => {
     setCurrentPage(page);
     window.scroll({ top: 0, behavior: "smooth" });
@@ -67,32 +70,36 @@ export function Recipes() {
 
   const onChangeSearch = (event) => {
     setSearch(event.target.value);
-    setCurrentPage(1);  // reset page number when search changes
+    setCurrentPage(1); // reset page number when search changes
   };
 
   return (
     <RecipesContainer>
       <PageHeader title="Recepty" subtitle="Recepty pro celou rodinu" />
-      <SearchInput
-        onChange={onChangeSearch}
-        value={search}
-        placeholder="Co chceš dnes vařit?"
-        type="search"
-      />
-      <button onClick={openPopup}>Sdílení receptu</button>
+      <div className="search-container">
+        <SearchInput
+          onChange={onChangeSearch}
+          value={search}
+          placeholder="Co chceš dnes vařit?"
+          type="search"
+        />
+        <button onClick={openPopup}>Sdílet recept</button>
+      </div>
       <AddRecipePopup
         isOpen={isPopupOpen}
         onClose={closePopup}
         onAddRecipe={addRecipe}
       />
-      <RecipesList recipes={displayedRecipes} />
-      {recipes.length > 0 && (
+      <RecipesList recipes={paginatedRecipes} />
+      {recipes.length > 0 ? (
         <Pagination
-          totalCountOfRegisters={recipes.length}
+          totalCountOfRegisters={filteredRecipes.length}
           currentPage={currentPage}
           onPageChange={onPageChange}
           registerPerPage={ITEMS_PER_PAGE}
         />
+      ) : (
+        <p>Čas přidat nějaké recepty</p>
       )}
     </RecipesContainer>
   );

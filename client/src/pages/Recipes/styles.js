@@ -23,3 +23,4 @@ export const SearchInput = styled.input`
     color: ${(props) => props.theme.text};
   }
 `;
+

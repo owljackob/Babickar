@@ -8,14 +8,8 @@ export const RecipeItemContainer = styled(Link)`
   height: 362px;
   border-radius: 30px;
   overflow: hidden;
-  background: ${(props) => props.theme.pink};
-
-  &:nth-child(even) {
-    background: ${(props) => props.theme.green};
-    p {
-      color: ${(props) => props.theme.white};
-    }
-  }
+  background: ${(props) => props.theme.secondary};
+  color: ${(props) => props.theme.primary};
 
   p {
     flex: 1;

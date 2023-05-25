@@ -64,7 +64,7 @@ export function Recipe() {
           {recipe.instructions && (
             <>
               <h3>Instructions</h3>
-              <h4 dangerouslySetInnerHTML={{ __html: recipe.instructions }} />
+              <h4 key="instructions" dangerouslySetInnerHTML={{ __html: recipe.instructions }} />
             </>
           )}
         </>

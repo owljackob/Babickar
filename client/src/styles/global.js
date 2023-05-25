@@ -12,13 +12,11 @@ export const GlobalStyles = createGlobalStyle`
         }
 
         ::-webkit-scrollbar-track {
-            border: 1px solid ${(props) => props.theme.text};
-            border-radius: 999px;
+            background: ${(props) => props.theme.text};
         }
 
         ::-webkit-scrollbar-thumb {
             background: ${(props) => props.theme.secondary};
-            border-radius: 999px;
         }
     }
 

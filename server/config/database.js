@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('cookbook', 'root', 'G01v62l67i90l92_', {
+const sequelize = new Sequelize('cookbook', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     sync: {
