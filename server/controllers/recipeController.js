@@ -5,11 +5,13 @@ const router = express.Router();
 
 router.post('/allRecipes/create', async (req, res) => {
   try {
-    const { name, categoryId, difficultyId, materials } = req.body;
+    const { name, categoryId, difficultyId, imgPath, instruction, materials } = req.body;
     const recipe = await recipeService.createRecipe(
         name,
         categoryId,
         difficultyId,
+        imgPath,
+        instruction,
         materials
     );
     res.status(201).json(recipe);

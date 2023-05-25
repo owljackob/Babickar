@@ -34,6 +34,14 @@ Recipe.init(
                 model: Difficulty,
                 key: 'id',
             }
+        },
+        imgPath: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        instruction: {
+            type: DataTypes.TEXT,
+            allowNull: false
         }
     },
     {
