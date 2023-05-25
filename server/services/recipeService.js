@@ -8,12 +8,14 @@ const ingredientService = require('./ingredientService');
 const { Sequelize } = require("sequelize");
 
 class RecipeService {
-    async createRecipe(name, categoryId, difficultyId, materials) {
+    async createRecipe(name, categoryId, difficultyId, imgPath, instruction, materials) {
         try {
             const recipe = await Recipe.create({
                 name,
                 categoryId,
-                difficultyId
+                difficultyId,
+                imgPath,
+                instruction
             });
 
             for (const materialData of materials){
@@ -54,10 +56,6 @@ class RecipeService {
 
     async getRecipesByFilter(categoryId, difficultyId) {
         try {
-            console.log('categoryId: ', categoryId);
-            console.log('Type of categoryId: ', typeof categoryId);
-            console.log('difficultyId: ',    difficultyId);
-            console.log('Type of difficultyId: ', typeof difficultyId);
             let filter = {};
             if (categoryId !== null && !isNaN(categoryId)) {
                 filter.categoryId = categoryId;
